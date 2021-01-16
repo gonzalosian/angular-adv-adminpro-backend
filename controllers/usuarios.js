@@ -8,13 +8,32 @@ const { generarJWT } = require('../helpers/jwt');
 
 const getUsuarios = async(req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre email role google');
+    // Paginación
+    const desde = Number( req.query.desde ) || 0;
+    console.log(desde);
+
+    // // const usuarios = await Usuario.find({}, 'nombre email role google');
+    // const usuarios = await Usuario.find({}, 'nombre email role google')
+    //                             .skip( desde )
+    //                             .limit(5);
+
+    // const total = await Usuario.count();
+
+    const [ usuarios, total ] = await Promise.all([
+        Usuario.find({}, 'nombre email role google img')
+                .skip( desde )
+                .limit(5),
+
+        // Usuario.count() // se dejó de usar
+        Usuario.countDocuments()
+    ]);
 
     res.json({
         ok: true,
         msg: 'GET Usuarios',
         usuarios,
         uid: req.uid, // Usuario que consultó, gracias a token válido
+        total
     })
 }
 

@@ -20,6 +20,9 @@ dbConnection();
 // process.env: Esto ya existe en NODE, pero leerá el archivo y establecerá las var.de entonrno de manera global en node.
 // console.log( process.env );
 
+// Directorio público
+app.use( express.static('public') );
+
 // Rutas + controlador
 app.use( '/api/usuarios', require('./routes/usuarios') ); // middleware
 app.use( '/api/hospitales', require('./routes/hospitales') ); // middleware

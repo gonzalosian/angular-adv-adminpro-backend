@@ -75,47 +75,33 @@ const crearHospital = async(req, res = response) => {
 const actualizaHospital = async(req, res = response) => {
     // TODO: Validar token y comprobar si es el usuario correcto
     
-    // const uid = req.params.id;
+    const id = req.params.id;
+    const uid = req.uid;
 
     try {
 
-        // const usuarioDB = await Usuario.findById( uid );
+        const hospitalDB = await Hospital.findById( id );
 
-        // if( !usuarioDB ){
-        //     return res.status(404).json({
-        //         ok: false,
-        //         msg: 'No existe un usuario con ese id'
-        //     });
-        // }
+        if( !hospitalDB ){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe un hospital con ese id'
+            });
+        }
 
-        // // Actualizaciones
-        // // const campos = req.body;
-        // // Si desestructuramos, podemos eliminar directamente los campos innecesarios como pass y google
-        // const { password, google, email, ...campos } = req.body;
+        // Actualizaciones
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        }
 
-        // // Si el usuario no está actualizando su email, tirará error por campo único, por lo que lo borramos para evitarlo
-        // if( usuarioDB.email !== req.body.email ){
-        //     // verificamos si existe en otro usuario
-        //     const existeEmail = await Usuario.findOne({ email });
-        //     if( existeEmail ){
-        //         return res.status(400).json({
-        //             ok: false,
-        //             msg: 'Ya existe un usuario con ese email'
-        //         });
-        //     }
-        // }
-        
-        // // delete campos.password; // eliminamos el pass para no sobreescribirlo
-        // // delete campos.google;
-        
-        // // findByIdAndUpdate: tenemos la opción de pedir que siempre nos devuelva el usuario actualizado { new: true }
-        // campos.email = email;
-        // const usuarioActualizado = await Usuario.findByIdAndUpdate( uid, campos, { new: true } );
+        // findByIdAndUpdate: tenemos la opción de pedir que siempre nos devuelva el usuario actualizado { new: true }
+        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, { new: true } );
 
         res.json({
             ok: true,
-            msg: 'PUT Hospital',
-            // usuario: usuarioActualizado
+            // msg: 'PUT Hospital',
+            hospital: hospitalActualizado
         })
         
     } catch (error) {
@@ -131,33 +117,33 @@ const actualizaHospital = async(req, res = response) => {
 // Esto se implementa a mero ejemplo, ya que conviene dar de baja al usuario, modificarlo, para no perder referencias.
 const borrarHospital = async(req, res = response) => {
     
-//     const uid = req.params.id;
+    const id = req.params.id;
 
-//     try {
+    try {
 
-//         const usuarioDB = await Usuario.findById( uid );
+        const hospitalDB = await Hospital.findById( id );
 
-//         if( !usuarioDB ){
-//             return res.status(404).json({
-//                 ok: false,
-//                 msg: 'No existe un usuario con ese id'
-//             });
-//         }
+        if( !hospitalDB ){
+            return res.status(404).json({
+                ok: false,
+                msg: 'No existe un hospital con ese id'
+            });
+        }
 
-//         await Usuario.findByIdAndDelete( uid );
+        await Hospital.findByIdAndDelete( id );
         
         res.json({
             ok: true,
             msg: 'Hospital eliminado'
         })
 
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({
-//             ok: false,
-//             msg: 'Error inesperado al eliminar...revisar logs'
-//         })
-//     }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'No se pudo eliminar el hospital'
+        })
+    }
 }
 
 

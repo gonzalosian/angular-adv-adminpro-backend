@@ -96,10 +96,27 @@ const googleSignIn = async( req, res = response ) => {
             msg: 'Token incorrecto',
         });
     }
-
 }
+
+
+// Lo utilizaremos para verificar si el token aun es válido. Sino, lo renovamos.
+const renewToken = async( req, res = response ) => {
+    // el req viene en el header
+    const uid = req.uid;
+    // Generar el token - JWT
+    const token = await generarJWT( uid );
+
+    res.json({
+        ok: true,
+        msg: 'Token re-validado',
+        // uid,
+        token,
+    })
+}
+
 
 module.exports = {
     login,
-    googleSignIn
+    googleSignIn,
+    renewToken
 }

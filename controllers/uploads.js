@@ -85,24 +85,24 @@ const fileUpload = (req, res = response) => {
 
 const retornaImagen = ( req, res = response ) => {
     const { tipo, foto } = req.params;
-
-    let pathImg = path.join( __dirname, `../uploads/${ tipo }/${ foto }` );
+    // Acá van los dos puntos porque está posicionado en la carpeta controllers
+    const pathImg = path.join( __dirname, `../uploads/${ tipo }/${ foto }` );
     
     // imagen por defecto
-    // if( fs.existsSync( pathImg ) ){
-    //     // Para decirle a Express que responda a esto, no un json, sino una imagen/archivo
-    //     res.sendFile( pathImg );
-    // } else{
-    //     const pathImg = path.join( __dirname, `../uploads/no-img.jpg` );
-    //     res.sendFile( pathImg );
-    // }
-    
-    if( !fs.existsSync( pathImg ) ){
+    if( fs.existsSync( pathImg ) ){
         // Para decirle a Express que responda a esto, no un json, sino una imagen/archivo
-        pathImg = path.join( __dirname, `../uploads/no-img.jpg` );
+        res.sendFile( pathImg );
+    } else{
+        const pathImg = path.join( __dirname, `../uploads/no-img.png` );
+        res.sendFile( pathImg );
     }
     
-    res.sendFile( pathImg );
+    // if( !fs.existsSync( pathImg ) ){
+    //     // Para decirle a Express que responda a esto, no un json, sino una imagen/archivo
+    //     pathImg = path.join( __dirname, `../uploads/no-img.png` );
+    // }
+    
+    // res.sendFile( pathImg );
 }
 
 

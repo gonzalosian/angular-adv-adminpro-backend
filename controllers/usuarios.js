@@ -20,9 +20,10 @@ const getUsuarios = async(req, res) => {
     // const total = await Usuario.count();
 
     const [ usuarios, total ] = await Promise.all([
-        Usuario.find({}, 'nombre email role google img')
-                .skip( desde )
-                .limit(5),
+        Usuario
+            .find({}, 'nombre email role google img')
+            .skip( desde )
+            .limit(5),
 
         // Usuario.count() // se dejó de usar
         Usuario.countDocuments()
@@ -84,6 +85,7 @@ const crearUsuario = async(req, res = response) => {
     
 }
 
+
 const actualizaUsuario = async(req, res = response) => {
     // TODO: Validar token y comprobar si es el usuario correcto
     
@@ -106,7 +108,7 @@ const actualizaUsuario = async(req, res = response) => {
         const { password, google, email, ...campos } = req.body;
 
         // Si el usuario no está actualizando su email, tirará error por campo único, por lo que lo borramos para evitarlo
-        if( usuarioDB.email !== req.body.email ){
+        if( usuarioDB.email !== email ){
             // verificamos si existe en otro usuario
             const existeEmail = await Usuario.findOne({ email });
             if( existeEmail ){
@@ -120,8 +122,17 @@ const actualizaUsuario = async(req, res = response) => {
         // delete campos.password; // eliminamos el pass para no sobreescribirlo
         // delete campos.google;
         
+        // Modificaremos el email unicamente si no es un usuario de google
+        if( !usuarioDB.google ){
+            campos.email = email;
+        } else if ( usuarioDB.email !== email ){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de Google no pueden cambiar su correo'
+            });
+        }
+        
         // findByIdAndUpdate: tenemos la opción de pedir que siempre nos devuelva el usuario actualizado { new: true }
-        campos.email = email;
         const usuarioActualizado = await Usuario.findByIdAndUpdate( uid, campos, { new: true } );
 
         res.json({

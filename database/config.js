@@ -2,6 +2,7 @@
 // Aquí las configuraciones globales.
 const mongoose = require('mongoose');
 require('dotenv').config();
+// require('dotenv').config({path: '.env'});
 
 const dbConnection = async() => {
 

@@ -1,5 +1,6 @@
 // Ver documentación de dotenv. Lee variables de entonrno en archivo .env y las establece en las var de entorno de NODE.
 require('dotenv').config();
+const path = require('path'); // esto es para construir el path
 
 const express = require('express');
 const cors = require('cors');
@@ -30,6 +31,12 @@ app.use( '/api/medicos', require('./routes/medicos') ); // middleware
 app.use( '/api/todo', require('./routes/busquedas') ); // middleware
 app.use( '/api/upload', require('./routes/uploads') ); // middleware
 app.use( '/api/login', require('./routes/auth') ); // middleware
+
+
+// Lo último :: Cualquier otra ruta pasará por acá
+app.get('*', (req, res) => {
+    res.sendFile( path.resolve( __dirname, 'public/index.html' ) );
+} )
 
 
 app.listen( process.env.PORT, () => {

@@ -34,10 +34,10 @@ const validarJWT = ( req, res = response, next ) => {
 
 }
 
-const validarADMIN_ROLE = async() => {
+const validarADMIN_ROLE = async( req, res = response, next ) => {
 
     const uid = req.uid;
-
+    // console.log(`validarADMIN_ROLE: ${uid}`);
     try {
         const usuarioDB = await Usuario.findById( uid );
 
@@ -67,11 +67,11 @@ const validarADMIN_ROLE = async() => {
 }
 
 
-const validarADMIN_ROLE_o_MismoUsuario = async() => {
+const validarADMIN_ROLE_o_MismoUsuario = async( req, res = response, next ) => {
 
     const uid = req.uid;
     const id = req.params.uid;
-
+    // console.log(`validarADMIN_ROLE_o_MismoUsuario: ${uid} - ${id}`);
     try {
         const usuarioDB = await Usuario.findById( uid );
 
@@ -91,7 +91,6 @@ const validarADMIN_ROLE_o_MismoUsuario = async() => {
                 msg: 'No tiene privilegios para hacer eso'
             });
         }
-
         
     } catch (error) {
         console.error(error);

@@ -1,53 +1,52 @@
 // response me puede servir para definir el tipo, por ejemplo, si no viene la res (response), ponemos un valor por default
 const { response } = require('express');
 
-const Hospital = require('../models/hospital');
+const Noticia = require('../models/noticia');
 
 
-const getHospitales = async(req, res = response) => {
+const getNoticias = async(req, res = response) => {
 
     // const hospitales = await Hospital.find({}, 'nombre img usuario');
-    const hospitales = await Hospital.find()
-                                    .populate('usuario', 'nombre img');
+    const noticias = await Noticia.find()
+                                    .populate('usuario', 'titulo subtitulo descripcion img');
 
     res.json({
         ok: true,
-        msg: 'GET Hospitales',
-        hospitales,
+        msg: 'GET Noticias',
+        noticias,
         // uid: req.uid, // Usuario que consultó, gracias a token válido
     })
 }
 
 
-const crearHospital = async(req, res = response) => {
-
+const crearNoticia = async(req, res = response) => {
     // console.log(req.body);
-    const { nombre } = req.body;
+    const { titulo } = req.body;
 
     try {
-        const existeHospital = await Hospital.findOne({ nombre });
+        const existeNoticia = await Noticia.findOne({ titulo });
 
-        if( existeHospital ){
+        if( existeNoticia ){
             return res.status(400).json({
                 ok: false,
-                msg: 'El nombre del hospital ya está registrado'
+                msg: 'El titulo de la noticia ya está registrado'
             });
         }
 
         // Después de pasar por la validación del token, siempre tendremos el uid
         const uid = req.uid;
-        const hospital = new Hospital( {
+        const noticia = new Noticia( {
             usuario: uid,
             ...req.body
         } );
     
         // Guardar usuario
-        await hospital.save();
+        await noticia.save();
 
         res.json({
             ok: true,
-            msg: 'POST Hospital',
-            hospital,
+            msg: 'POST Noticia',
+            noticia,
             // token
         })
         
@@ -59,10 +58,9 @@ const crearHospital = async(req, res = response) => {
             msg: 'Error inesperado...revisar logs'
         });
     }
-    
 }
 
-const actualizaHospital = async(req, res = response) => {
+const actualizaNoticia = async(req, res = response) => {
     // TODO: Validar token y comprobar si es el usuario correcto
     
     const id = req.params.id;
@@ -70,28 +68,28 @@ const actualizaHospital = async(req, res = response) => {
 
     try {
 
-        const hospitalDB = await Hospital.findById( id );
+        const noticiaDB = await Noticia.findById( id );
 
-        if( !hospitalDB ){
+        if( !noticiaDB ){
             return res.status(404).json({
                 ok: false,
-                msg: 'No existe un hospital con ese id'
+                msg: 'No existe una noticia con ese id'
             });
         }
 
         // Actualizaciones
-        const cambiosHospital = {
+        const cambiosNoticia = {
             ...req.body,
             usuario: uid
         }
 
         // findByIdAndUpdate: tenemos la opción de pedir que siempre nos devuelva el usuario actualizado { new: true }
-        const hospitalActualizado = await Hospital.findByIdAndUpdate( id, cambiosHospital, { new: true } );
+        const noticiaActualizado = await Noticia.findByIdAndUpdate( id, cambiosNoticia, { new: true } );
 
         res.json({
             ok: true,
             // msg: 'PUT Hospital',
-            hospital: hospitalActualizado
+            noticia: noticiaActualizado
         })
         
     } catch (error) {
@@ -105,41 +103,41 @@ const actualizaHospital = async(req, res = response) => {
 
 
 // Esto se implementa a mero ejemplo, ya que conviene dar de baja al usuario, modificarlo, para no perder referencias.
-const borrarHospital = async(req, res = response) => {
+const borrarNoticia = async(req, res = response) => {
     
     const id = req.params.id;
 
     try {
 
-        const hospitalDB = await Hospital.findById( id );
+        const noticiaDB = await Noticia.findById( id );
 
-        if( !hospitalDB ){
+        if( !noticiaDB ){
             return res.status(404).json({
                 ok: false,
-                msg: 'No existe un hospital con ese id'
+                msg: 'No existe un noticia con ese id'
             });
         }
 
-        await Hospital.findByIdAndDelete( id );
+        await Noticia.findByIdAndDelete( id );
         
         res.json({
             ok: true,
-            msg: 'Hospital eliminado'
+            msg: 'Noticia eliminada'
         })
 
     } catch (error) {
         console.error(error);
         res.status(500).json({
             ok: false,
-            msg: 'No se pudo eliminar el hospital'
+            msg: 'No se pudo eliminar la noticia'
         })
     }
 }
 
 
 module.exports = {
-    getHospitales,
-    crearHospital,
-    actualizaHospital,
-    borrarHospital
+    getNoticias,
+    crearNoticia,
+    actualizaNoticia,
+    borrarNoticia
 }

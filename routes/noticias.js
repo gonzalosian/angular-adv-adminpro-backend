@@ -7,11 +7,13 @@ const { check } = require('express-validator');
 
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
-const { getNoticias, crearNoticia, actualizaNoticia, borrarNoticia } = require('../controllers/noticias');
+const { getNoticias, getNoticiaById, crearNoticia, actualizaNoticia, borrarNoticia } = require('../controllers/noticias');
 
 const router = Router();
 
-router.get( '/', [], getNoticias);
+router.get( '/', validarJWT, getNoticias);
+
+router.get( '/:id', validarJWT, getNoticiaById);
 
 router.post( '/', 
     [

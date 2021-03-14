@@ -3,6 +3,7 @@ const fs = require('fs');
 const Usuario = require('../models/usuario');
 const Medico = require('../models/medico');
 const Hospital = require('../models/hospital');
+const Noticia = require('../models/noticia');
 
 const borrarImagen = ( path ) => {
     if( fs.existsSync( path ) ){
@@ -20,7 +21,7 @@ const actualizarImagen = async( tipo, id, nombreArchivo ) => {
             const medico = await Medico.findById( id );
 
             if( !medico ){
-                console.log('No es un medico por id');
+                console.log('No es un médico por id');
                 return false
             }
 
@@ -51,6 +52,25 @@ const actualizarImagen = async( tipo, id, nombreArchivo ) => {
             // A la instancia del hospital le establecemos la img
             hospital.img = nombreArchivo;
             await hospital.save();
+            return true;
+            
+            break;
+        case 'noticias':
+            const noticia = await Noticia.findById( id );
+
+            if( !noticia ){
+                console.log('No es una noticia por id');
+                return false
+            }
+
+            // Establecemos un path
+            pathViejo = `./uploads/noticias/${ noticia.img }`;
+
+            borrarImagen( pathViejo );
+
+            // A la instancia del hospital le establecemos la img
+            noticia.img = nombreArchivo;
+            await noticia.save();
             return true;
             
             break;

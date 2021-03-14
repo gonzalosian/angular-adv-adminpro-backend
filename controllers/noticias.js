@@ -6,16 +6,60 @@ const Noticia = require('../models/noticia');
 
 const getNoticias = async(req, res = response) => {
 
+    // Paginación
+    const desde = Number( req.query.desde ) || 0;
+
     // const hospitales = await Hospital.find({}, 'nombre img usuario');
-    const noticias = await Noticia.find()
-                                    .populate('usuario', 'titulo subtitulo descripcion img');
+
+    // const noticias = await Noticia.find()
+    //                             .populate('usuario', 'nombre img')
+    //                             .limit(4)
+
+    const [ noticias, total ] = await Promise.all([
+        Noticia.find()
+            .populate('usuario', 'nombre img')
+            .skip( desde )
+            .limit(4),
+
+        // Usuario.count() // se dejó de usar
+        Noticia.countDocuments()
+    ]);
 
     res.json({
         ok: true,
         msg: 'GET Noticias',
         noticias,
+        total
         // uid: req.uid, // Usuario que consultó, gracias a token válido
     })
+}
+
+
+const getNoticiaById = async(req, res = response) => {
+
+    const id = req.params.id;
+    // console.log(id);
+
+    try {
+        const noticia = await Noticia.findById(id)
+                                    .populate('usuario', 'nombre img');
+        
+        // console.log(noticia);
+    
+        res.json({
+            ok: true,
+            msg: 'GET Noticia By Id',
+            noticia,
+        })
+        
+    } catch (error) {
+        console.log(error);
+        
+        res.json({
+            ok: false,
+            msg: 'Hable con el Administrador',
+        })
+    }
 }
 
 
@@ -137,6 +181,7 @@ const borrarNoticia = async(req, res = response) => {
 
 module.exports = {
     getNoticias,
+    getNoticiaById,
     crearNoticia,
     actualizaNoticia,
     borrarNoticia

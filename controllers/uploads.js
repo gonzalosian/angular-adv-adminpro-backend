@@ -15,15 +15,17 @@ const fileUpload = (req, res = response) => {
     // const tipo = req.params.tipo;
     // const id = req.params.id;
     const { tipo, id } = req.params;
+
+    // console.log(` ${tipo} - ${id}`);
     
     // const regex = new RegExp( busqueda, 'i' );
 
-    const tiposValidos = [ 'medicos', 'hospitales', 'usuarios' ];
+    const tiposValidos = [ 'medicos', 'hospitales', 'usuarios', 'noticias' ];
 
     if( !tiposValidos.includes( tipo ) ){
         return res.status(400).json({
             ok: false,
-            msg: 'No es un médico, hospital o usuario'
+            msg: 'No es un médico, hospital, usuario o noticia'
         })
     }
 
@@ -56,6 +58,8 @@ const fileUpload = (req, res = response) => {
 
     // Path para guardar la imagen
     const path = `./uploads/${ tipo }/${ nombreArchivo }`;
+
+    // console.log(`Este es el PATH: ${path}`);
 
     // Use the mv() method to place the file somewhere on your server
     file.mv( path, (err) => {

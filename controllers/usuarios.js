@@ -10,7 +10,7 @@ const getUsuarios = async(req, res) => {
 
     // Paginación
     const desde = Number( req.query.desde ) || 0;
-    console.log(desde);
+    // console.log(desde);
 
     // // const usuarios = await Usuario.find({}, 'nombre email role google');
     // const usuarios = await Usuario.find({}, 'nombre email role google')
